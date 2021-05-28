@@ -20,9 +20,12 @@ for clazz in config.name_lists:
     wavs = data_split(wavs, config.max_wav_size, config.n_frames)
 
     for wav in wavs:
+        print(wav.shape)
         f0, timeaxis, sp, ap = world_decompose(wav, config.sampling_rate, config.frame_period)
 
+        print(sp.shape)
         tmp_x = world_encode_spectral_envelop(sp, config.sampling_rate, config.num_mcep).T
+        print(tmp_x.shape)
 
         tmp_y = np.zeros(len(config.name_lists))
         tmp_y[config.name2id[clazz]] = 1

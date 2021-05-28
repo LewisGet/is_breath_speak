@@ -44,10 +44,11 @@ def data_split(dataset, max_len=config.max_wav_size, n_frames=config.n_frames):
         for i in range(len(data)):
             start = int(i * max_len * 0.5)
             end = start + 1 * max_len
-            tmp_data = data[:, start: end]
+            tmp_data = data[start: end]
 
-            if len(tmp_data) < n_frames:
-                tmp_data = data[:, -1 * max_len:]
+            # todo: this is lazy fixed, fixed it perfect
+            if len(tmp_data) < max_len:
+                tmp_data = data[-1 * max_len:]
                 return_dataset.append(tmp_data)
                 break
 
