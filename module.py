@@ -1,33 +1,180 @@
 import tensorflow as tf
 import config
 
-size = config.size
-
-input_X = tf.placeholder(tf.float32, [None, config.num_mcep * size])
+input_shape = [None, config.num_mcep, config.size, 1]
+input_X = tf.placeholder(tf.float32, shape=input_shape)
 input_Y = tf.placeholder(tf.float32, [None, config.labels])
 
-layer_size_1 = 48
-layer_size_2 = 24
-layer_size_3 = config.labels
+layers = list()
 
-weight_1 = tf.Variable(tf.truncated_normal([config.num_mcep * size, layer_size_1]))
-weight_2 = tf.Variable(tf.truncated_normal([layer_size_1, layer_size_2]))
-weight_3 = tf.Variable(tf.truncated_normal([layer_size_2, layer_size_3]))
+layer1 = tf.layers.conv2d(
+    inputs=input_X,
+    filters=128,
+    kernel_size=[3, 3],
+    strides=[1, 1],
+    activation=None,
+    name="h1_x"
+)
 
-biases_1 = tf.Variable(tf.truncated_normal([layer_size_1]))
-biases_2 = tf.Variable(tf.truncated_normal([layer_size_2]))
-biases_3 = tf.Variable(tf.truncated_normal([layer_size_3]))
+weight1 = tf.layers.conv2d(
+    inputs=input_X,
+    filters=128,
+    kernel_size=[3, 3],
+    strides=[1, 1],
+    activation=None,
+    name="h1_w"
+)
 
-layer_1 = tf.add(tf.matmul(input_X, weight_1), biases_1)
-layer_1 = tf.nn.sigmoid(layer_1)
+layer_weight_1 = tf.multiply(x=layer1, y=weight1, name="h1_wx")
 
-layer_2 = tf.add(tf.matmul(layer_1, weight_2), biases_2)
-layer_2 = tf.nn.sigmoid(layer_2)
+layer2 = tf.layers.conv2d(
+    inputs=layer_weight_1,
+    filters=128,
+    kernel_size=[3, 3],
+    strides=[1, 1],
+    activation=None,
+    name="h2_x"
+)
 
-layer_3 = tf.add(tf.matmul(layer_2, weight_3), biases_3)
-layer_3 = tf.nn.sigmoid(layer_3)
+# todo: 詳細了解目的
+layer2_norm = tf.contrib.layers.instance_norm(
+    inputs=layer2,
+    # todo: 詳細了解［目前了解為：接近這小數點的話視同為0 來省略計算］
+    epsilon=1e-06,
+    activation_fn=None
+)
 
-_f = layer_3
+
+weight2 = tf.layers.conv2d(
+    inputs=layer_weight_1,
+    filters=128,
+    kernel_size=[3, 3],
+    strides=[1, 1],
+    activation=None,
+    name="h2_w"
+)
+
+weight2_norm = tf.contrib.layers.instance_norm(
+    inputs=weight2,
+    # todo: 詳細了解［目前了解為：接近這小數點的話視同為0 來省略計算］
+    epsilon=1e-06,
+    activation_fn=None
+)
+
+layer_weight_2 = tf.multiply(x=layer2_norm, y=weight2_norm, name="h2_wx")
+
+layer3 = tf.layers.conv2d(
+    inputs=layer_weight_2,
+    filters=128,
+    kernel_size=[3, 3],
+    strides=[1, 1],
+    activation=None,
+    name="h3_x"
+)
+
+# todo: 詳細了解目的
+layer3_norm = tf.contrib.layers.instance_norm(
+    inputs=layer3,
+    # todo: 詳細了解［目前了解為：接近這小數點的話視同為0 來省略計算］
+    epsilon=1e-06,
+    activation_fn=None
+)
+
+
+weight3 = tf.layers.conv2d(
+    inputs=layer_weight_2,
+    filters=128,
+    kernel_size=[3, 3],
+    strides=[1, 1],
+    activation=None,
+    name="h3_w"
+)
+
+weight3_norm = tf.contrib.layers.instance_norm(
+    inputs=weight3,
+    # todo: 詳細了解［目前了解為：接近這小數點的話視同為0 來省略計算］
+    epsilon=1e-06,
+    activation_fn=None
+)
+
+layer_weight_3 = tf.multiply(x=layer3_norm, y=weight3_norm, name="h3_wx")
+
+layer4 = tf.layers.conv2d(
+    inputs=layer_weight_3,
+    filters=128,
+    kernel_size=[3, 3],
+    strides=[1, 1],
+    activation=None,
+    name="h4_x"
+)
+
+# todo: 詳細了解目的
+layer4_norm = tf.contrib.layers.instance_norm(
+    inputs=layer4,
+    # todo: 詳細了解［目前了解為：接近這小數點的話視同為0 來省略計算］
+    epsilon=1e-06,
+    activation_fn=None
+)
+
+
+weight4 = tf.layers.conv2d(
+    inputs=layer_weight_3,
+    filters=128,
+    kernel_size=[3, 3],
+    strides=[1, 1],
+    activation=None,
+    name="h4_w"
+)
+
+weight4_norm = tf.contrib.layers.instance_norm(
+    inputs=weight4,
+    # todo: 詳細了解［目前了解為：接近這小數點的話視同為0 來省略計算］
+    epsilon=1e-06,
+    activation_fn=None
+)
+
+layer_weight_4 = tf.multiply(x=layer4_norm, y=weight4_norm, name="h4_wx")
+
+layer5 = tf.layers.conv2d(
+    inputs=layer_weight_4,
+    filters=128,
+    kernel_size=[3, 3],
+    strides=[1, 1],
+    activation=None,
+    name="h5_x"
+)
+
+# todo: 詳細了解目的
+layer5_norm = tf.contrib.layers.instance_norm(
+    inputs=layer5,
+    # todo: 詳細了解［目前了解為：接近這小數點的話視同為0 來省略計算］
+    epsilon=1e-06,
+    activation_fn=None
+)
+
+
+weight5 = tf.layers.conv2d(
+    inputs=layer_weight_4,
+    filters=128,
+    kernel_size=[3, 3],
+    strides=[1, 1],
+    activation=None,
+    name="h5_w"
+)
+
+weight5_norm = tf.contrib.layers.instance_norm(
+    inputs=weight5,
+    # todo: 詳細了解［目前了解為：接近這小數點的話視同為0 來省略計算］
+    epsilon=1e-06,
+    activation_fn=None
+)
+
+layer_weight_5 = tf.multiply(x=layer5_norm, y=weight5_norm, name="h5_wx")
+
+o1 = tf.layers.dense(inputs=layer_weight_5, units=config.labels, activation=tf.nn.sigmoid)
+
+
+_f = o1
 f = input_Y
 
 loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=_f, labels=f))

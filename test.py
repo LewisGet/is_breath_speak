@@ -44,8 +44,8 @@ for wav in wavs:
 x = np.array(x)
 saver.restore(sess, config.model_name)
 
-x = x.reshape(len(x), config.num_mcep * config.size)
-y_ = sess.run(layer_3, feed_dict={input_X: x})
+x = x.reshape(len(x), config.num_mcep, config.size, 1)
+y_ = sess.run(o1, feed_dict={input_X: x})
 
 i = 0
 for wav, guess in zip(wavs, y_):
