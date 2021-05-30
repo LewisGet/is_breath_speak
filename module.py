@@ -25,7 +25,7 @@ weight1 = tf.layers.conv2d(
     name="h1_w"
 )
 
-layer_weight_1 = tf.multiply(x=layer1, y=weight1, name="h1_wx")
+layer_weight_1 = tf.multiply(x=layer1, y=tf.sigmoid(weight1), name="h1_wx")
 
 layer2 = tf.layers.conv2d(
     inputs=layer_weight_1,
@@ -61,7 +61,7 @@ weight2_norm = tf.contrib.layers.instance_norm(
     activation_fn=None
 )
 
-layer_weight_2 = tf.multiply(x=layer2_norm, y=weight2_norm, name="h2_wx")
+layer_weight_2 = tf.multiply(x=layer2_norm, y=tf.sigmoid(weight2_norm), name="h2_wx")
 
 layer3 = tf.layers.conv2d(
     inputs=layer_weight_2,
@@ -97,7 +97,7 @@ weight3_norm = tf.contrib.layers.instance_norm(
     activation_fn=None
 )
 
-layer_weight_3 = tf.multiply(x=layer3_norm, y=weight3_norm, name="h3_wx")
+layer_weight_3 = tf.multiply(x=layer3_norm, y=tf.sigmoid(weight3_norm), name="h3_wx")
 
 layer4 = tf.layers.conv2d(
     inputs=layer_weight_3,
@@ -133,7 +133,7 @@ weight4_norm = tf.contrib.layers.instance_norm(
     activation_fn=None
 )
 
-layer_weight_4 = tf.multiply(x=layer4_norm, y=weight4_norm, name="h4_wx")
+layer_weight_4 = tf.multiply(x=layer4_norm, y=tf.sigmoid(weight4_norm), name="h4_wx")
 
 layer5 = tf.layers.conv2d(
     inputs=layer_weight_4,
@@ -169,7 +169,7 @@ weight5_norm = tf.contrib.layers.instance_norm(
     activation_fn=None
 )
 
-layer_weight_5 = tf.multiply(x=layer5_norm, y=weight5_norm, name="h5_wx")
+layer_weight_5 = tf.multiply(x=layer5_norm, y=tf.sigmoid(weight5_norm), name="h5_wx")
 
 o1 = tf.layers.dense(inputs=layer_weight_5, units=config.labels, activation=tf.nn.sigmoid)
 
@@ -177,7 +177,7 @@ o1 = tf.layers.dense(inputs=layer_weight_5, units=config.labels, activation=tf.n
 _f = o1
 f = input_Y
 
-loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=_f, labels=f))
+loss = tf.reduce_mean(tf.square(f - _f))
 optimizer = tf.train.AdamOptimizer(learning_rate=config.learning_rate).minimize(loss)
 
 sess = tf.Session()
