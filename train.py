@@ -17,11 +17,16 @@ print(x.shape, y.shape)
 x = x.reshape(len(x), config.num_mcep, config.size, 1)
 
 feed_indexs = np.arange(len(x))
-np.random.shuffle(feed_indexs)
+max_feed = int(len(x) / 4)
 
-for i in range(15000):
-    for b in range(len(x)):
-        sess.run(optimizer, feed_dict={input_X: [x[feed_indexs[b]]], input_Y: [y[feed_indexs[b]]]})
+for i in range(10):
+    np.random.shuffle(feed_indexs)
+    feed_x = x[feed_indexs[:max_feed]]
+    feed_y = y[feed_indexs[:max_feed]]
+    feed_in = {input_X: feed_x, input_Y: feed_y}
+    sess.run(optimizer, feed_dict=feed_in)
 
-print(sess.run(loss, feed_dict={input_X: [x[feed_indexs[0]]], input_Y: [y[feed_indexs[0]]]}))
+    print(sess.run(loss, feed_dict=feed_in))
+
+print(sess.run(loss, feed_dict=feed_in))
 saver.save(sess, config.model_name)
