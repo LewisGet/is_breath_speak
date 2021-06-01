@@ -49,7 +49,7 @@ y_ = sess.run(o1, feed_dict={input_X: x})
 
 i = 0
 for wav, guess in zip(wavs, y_):
-    guess_index = np.argmin(guess)
+    guess_index = np.argmax(guess)
     print(guess_index)
 
     save_path = os.path.join(config.output_path, config.id2name[guess_index])
